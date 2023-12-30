@@ -32,7 +32,7 @@ public class BookService {
     }
 
     @Transactional
-    public void bookLoan(BookLoanRequest request) {
+    public void loanBook(BookLoanRequest request) {
         Book book = bookRepository.findByName(request.getBookName()).orElseThrow(IllegalArgumentException::new);
 
         if (userLoanHistoryRepository.existsByBookNameAndIsReturn(request.getBookName(), false)) {
