@@ -34,20 +34,27 @@ public class BookService {
 
     @Transactional
     public void loanBook(BookLoanRequest request) {
+        // 책 있는지 확인
         Book book = bookRepository.findByName(request.getBookName()).orElseThrow(IllegalArgumentException::new);
 
+        // isReturn으로 대출 중인지 확인 true: 대출 가능 false: 대출 중
         if (userLoanHistoryRepository.existsByBookNameAndIsReturn(request.getBookName(), false)) {
             throw new IllegalArgumentException("현재 대출 중인 책입니다.");
         }
 
+        // 유저 정보가 있는지 확인
         User user = userRepository.findByName(request.getUserName()).orElseThrow(IllegalArgumentException::new);
-        userLoanHistoryRepository.save(new UserLoanHistory(user.getId(), book.getName()));
+
+        // 유저 대출 기록에 저장
+//        userLoanHistoryRepository.save(new UserLoanHistory(this, book.getName()));
+        user.loanBook(request.getBookName());
     }
 
     @Transactional
     public void returnBook(BookReturnRequest request) {
         User user = userRepository.findByName(request.getUserName()).orElseThrow(IllegalArgumentException::new);
-        UserLoanHistory userLoanHistory = userLoanHistoryRepository.findByUserIdAndBookName(user.getId(), request.getBookName()).orElseThrow(IllegalArgumentException::new);
-        userLoanHistory.doReturn();
+        /*UserLoanHistory userLoanHistory = userLoanHistoryRepository.findByUserIdAndBookName(user.getId(), request.getBookName()).orElseThrow(IllegalArgumentException::new);
+        userLoanHistory.doReturn(); // @Transactional에서 변경감지가 되면 자동으로 정보가 수정된다.*/
+        user.returnBook(request.getBookName());
     }
 }
