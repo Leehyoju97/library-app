@@ -27,4 +27,9 @@ public class BookController {
     public void loanBook(@RequestBody BookLoanRequest request) {
         bookService.loanBook(request);
     }
+
+    @PutMapping("/book/return")
+    public void returnBook(@RequestBody BookReturnRequest request) {
+        bookService.returnBook(request);
+    }
 }
